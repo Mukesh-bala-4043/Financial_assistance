@@ -1,2 +1,2 @@
 # Financial_assistance
-Just for personal developement
+School project
