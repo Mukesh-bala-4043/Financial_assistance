@@ -1,0 +1,12 @@
+requirements
+
+python >= V3.9
+
+#this are modules to be installed
+# install this using command 'pip install modulename==version'
+
+customtkinter >= 5.2.1
+CtkTable >= 0.8
+CtkMessagebox >= 2.5
+packaging >= 23.1
+pillow >= 9.3.0
