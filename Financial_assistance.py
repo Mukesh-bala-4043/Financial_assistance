@@ -1,17 +1,20 @@
 from customtkinter import *
-from bkend2 import *
+from bkendsqlite import *
 from PIL import Image
 import time
 from CTkTable import *
+from random import *
 
 
 """__________________________________________________________________________________________________________"""
 
 ft = "candara"
-pn = "img n.png"
-set_appearance_mode("light")
-
+p = ["img n.png","img1.png","img2.png","img3.png"]
+pn=p[0]
+set_appearance_mode("dark")
+pv = ["Never spend money before you have it.","Spending is quick; earning is slow.","Creditors have better memories than debtors.","A penny saved is a penny earned."]
 """__________________________________________________________________________________________________________"""
+#for changing theme
 def chtheme():
     v = bt.get()
     if v:
@@ -19,7 +22,7 @@ def chtheme():
     else:
         set_appearance_mode("dark")
 
-
+# for showing time
 def shtime():
     tt = time.strftime("Time : %I:%M:%S %p ")
     lt.configure(text=tt)
@@ -28,7 +31,7 @@ def shtime():
 
 c = 0
 
-
+# register transactions
 def Swin1():
     global c
 
@@ -52,11 +55,13 @@ def Swin1():
                 e1.delete(0, END)
                 e2.delete(0, END)
                 l3.configure(text=f"Current Record entered : {c}")
+                bb.configure(text=f"Balance amount : ${binfo()[1]}")
+                bu.configure(text=f"Used amount :     ${binfo()[0]}")
 
-    ty = ["Credit", "Debit"]
+    ty = ["Debit", "Credit"]
 
     win = CTkFrame(mainwin, fg_color=("#FFFFFF", "#000"), height=360, width=640)
-    win.place(x=0, y=0)
+    win.place(x=0, y=0,)
 
     ph3 = CTkImage(light_image=Image.open("img\\back.png"), dark_image=Image.open("img\\back.png"), size=(40, 40))
     i3 = CTkButton(win, image=ph3, bg_color=("#FFFFFF", "#000"), text="", hover=False, fg_color=("#FFFFFF", "#000"),
@@ -76,7 +81,7 @@ def Swin1():
                   text_color="#1E90FF", bg_color=("#FFFFFF", "#000"))
     l2.place(x=80, y=160)
 
-    l3 = CTkLabel(win, text=f"Current Record entered : {c}", font=("MV boli", 14), bg_color=("#FFFFFF", "#000"))
+    l3 = CTkLabel(win, text=f"Current Record entered : {c}", font=(ft, 18,"bold"), bg_color=("#FFFFFF", "#000"))
     l3.place(x=400, y=300)
 
     namevar = StringVar()
@@ -93,23 +98,30 @@ def Swin1():
     typ = StringVar()
     ot = CTkOptionMenu(win, width=30, height=27, button_color="#1E90FF", hover=False,
                        values=ty, variable=typ, bg_color=("#FFFFFF", "#000"), font=(ft, 18, "bold"))
-    ot.set("Credit")
+    ot.set("Debit")
     ot.place(x=400, y=50)
 
+    bu = CTkLabel(win, text=f"Used amount :     ${binfo()[0]}",bg_color=("#FFFFFF", "#000"),
+                  fg_color=("#FFFFFF", "#000"),font=(ft,18,"bold"))
+    bu.place(x=400,y=240)
+    bb = CTkLabel(win, text=f"Balance amount : ${binfo()[1]}", bg_color=("#FFFFFF", "#000"),
+                   fg_color=("#FFFFFF", "#000"),font=(ft, 18, "bold"))
+    bb.place(x=400, y=270)
 
+# monthly record
 def Swin2():
     mon = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October",
            "November", "December"]
 
     def intb():
-        tb.configure(rows=len(valtb(month.index(om.get()) + 1, ot.get()) + [None]))
+        tb.configure(rows=len(valtb(mon.index(om.get()) + 1, ot.get()) + [None]))
         tb.configure(values=[(1, 1)] + valtb(mon.index(om.get()) + 1, ot.get()))
         tb.insert(0, 0, value="Transaction name")
         tb.insert(0, 1, value="Transaction amt")
 
     win = CTkFrame(mainwin, width=640, height=360, fg_color=("#FFFFFF", "#000"), bg_color=("#FFFFFF", "#000"))
     win.place(x=0, y=0)
-    sf = CTkScrollableFrame(win, width=360, height=280, bg_color=("#FFFFFF", "#000"), fg_color=("#FFFFFF", "#000"))
+    sf = CTkScrollableFrame(win, width=360, height=220, bg_color=("#FFFFFF", "#000"), fg_color=("#FFFFFF", "#000"))
     sf.place(x=40, y=60)
 
     ph3 = CTkImage(light_image=Image.open("img\\back.png"), dark_image=Image.open("img\\back.png"), size=(40, 40))
@@ -123,16 +135,16 @@ def Swin2():
     m = StringVar()
     om = CTkOptionMenu(win, width=30, height=27, button_color="#1E90FF", hover=False,
                        values=mon, variable=m, bg_color=("#FFFFFF", "#000"), font=(ft, 18, "bold"))
-    om.set("Select month")
-    om.place(x=430, y=40)
-    month = mon + ["Select month"]
+    om.set(f"{mon[d.month-1]}")
+    om.place(x=450, y=70)
+
 
     ty = ["Credit", "Debit"]
     typ = StringVar()
     ot = CTkOptionMenu(win, width=30, height=27, button_color="#1E90FF", hover=False,
                        values=ty, variable=typ, bg_color=("#FFFFFF", "#000"), font=(ft, 18, "bold"))
-    ot.set("Credit")
-    ot.place(x=430, y=100)
+    ot.set("Debit")
+    ot.place(x=450, y=120)
 
     tb = CTkTable(sf, row=2, column=2, header_color="#1E90FF", corner_radius=7, values=[[1, 1]])
     tb.pack(padx=8, pady=8)
@@ -141,9 +153,12 @@ def Swin2():
 
     b1 = CTkButton(win, bg_color=("#FFFFFF", "#000"), text="SHOW", fg_color="#7CFC00", text_color="#000",
                    font=(ft, 18, "bold"), corner_radius=12, border_spacing=7, command=intb)
-    b1.place(x=450, y=200)
+    b1.place(x=450, y=250)
 
+    lp = CTkLabel(win,fg_color=("#FFFFFF", "#000"),text=f"{pv[randint(0,3)]}",font=("mv boli",14,"bold"))
+    lp.place(x=80,y=300)
 
+# search records
 def Swin3():
     def intb():
         tb.configure(rows=len(shtabels(e2.get(), ot.get())) + 1)
@@ -174,13 +189,13 @@ def Swin3():
 
     l = CTkLabel(win, text="Kindly enter date(YYYY-MM-DD) like this", font=("MV boli", 10),
                  bg_color=("#FFFFFF", "#000"))
-    l.place(x=430, y=220)
+    l.place(x=425, y=220)
 
     ty = ["Credit", "Debit"]
     typ = StringVar()
     ot = CTkOptionMenu(win, width=30, height=27, button_color="#1E90FF", hover=False,
                        values=ty, variable=typ, bg_color=("#FFFFFF", "#000"), font=(ft, 18, "bold"))
-    ot.set("Credit")
+    ot.set("Debit")
     ot.place(x=430, y=70)
     sf = CTkScrollableFrame(win, width=360, height=280, bg_color=("#FFFFFF", "#000"), fg_color=("#FFFFFF", "#000"))
     sf.place(x=40, y=60)
@@ -195,7 +210,7 @@ def Swin3():
                    font=(ft, 18, "bold"), corner_radius=12, border_spacing=7, command=intb)
     b1.place(x=430, y=280)
 
-
+# Transaction report
 def Swin4():
     def up():
         mn = om.get()
@@ -224,30 +239,30 @@ def Swin4():
     ltt = CTkLabel(win, text="Transaction Report", font=(ft, 22, "bold"), bg_color=("#FFFFFF", "#000"))
     ltt.place(x=110, y=23)
 
-    sf = CTkScrollableFrame(win, width=560, height=270, bg_color=("#FFFFFF", "#000"), fg_color=("#000", "#FFFFFF"))
+    sf = CTkScrollableFrame(win, width=560, height=260, bg_color=("#FFFFFF", "#000"), fg_color="#FFF",border_width=2,border_color="#000")
     sf.place(x=30, y=70)
 
-    l1 = CTkLabel(sf, text=f"Total no of Transaction : {tno}", text_color=("#FFFFFF", "#000"),
-                  bg_color=("#000", "#FFFFFF"), font=(ft, 16, "bold"))
+    l1 = CTkLabel(sf, text=f"Total no of Transaction : {tno}",text_color="#000",
+                  bg_color="#FFF", font=(ft, 16, "bold"))
     l1.pack(padx=5, pady=5, side='top',anchor = W)
 
-    l2 = CTkLabel(sf, text=f"Total amount Spended : {tot}", text_color=("#FFFFFF", "#000"),
-                  bg_color=("#000", "#FFFFFF"), font=(ft, 16, "bold"))
+    l2 = CTkLabel(sf, text=f"Total amount Spended : {tot}", text_color="#000",
+                  bg_color="#FFF", font=(ft, 16, "bold"))
     l2.pack(padx=5, pady=5, side='top',anchor = W)
 
-    l3= CTkLabel(sf, text=f"Total amount received : {dtot}", text_color=("#FFFFFF", "#000"),
-                 bg_color=("#000", "#FFFFFF"), font=(ft, 16, "bold"))
+    l3= CTkLabel(sf, text=f"Total amount received : {dtot}", text_color="#000",
+                  bg_color="#FFF", font=(ft, 16, "bold"))
     l3.pack(padx=5, pady=5, side='top',anchor = W)
 
-    l4 = CTkLabel(sf, text=f"Avg amount Spended : {avg}", text_color=("#FFFFFF", "#000"),
-                 bg_color=("#000", "#FFFFFF"), font=(ft, 16, "bold"))
+    l4 = CTkLabel(sf, text=f"Avg amount Spended : {avg}", text_color="#000",
+                  bg_color="#FFF", font=(ft, 16, "bold"))
     l4.pack(padx=5, pady=5, side='top',anchor = W)
 
-    l5 = CTkLabel(sf, text=f"Avg amount Recived : {davg}", text_color=("#FFFFFF", "#000"),
-                 bg_color=("#000", "#FFFFFF"), font=(ft, 16, "bold"))
+    l5 = CTkLabel(sf, text=f"Avg amount Recived : {davg}", text_color="#000",
+                  bg_color="#FFF", font=(ft, 16, "bold"))
     l5.pack(padx=5, pady=5, side='top',anchor = W)
-    l6 = CTkLabel(sf, text=f"Balance amount in account : {ab}", text_color=("#FFFFFF", "#000"),
-                  bg_color=("#000", "#FFFFFF"), font=(ft, 16, "bold"))
+    l6 = CTkLabel(sf, text=f"Balance amount in account : {ab}", text_color="#000",
+                  bg_color="#FFF", font=(ft, 16, "bold"))
     l6.pack(padx=5, pady=5, side='top', anchor=W)
 
     ph4 = CTkImage(light_image=Image.open("img\\img r.png"), dark_image=Image.open("img\\img r.png"), size=(30, 30))
@@ -258,91 +273,40 @@ def Swin4():
     m = StringVar()
     om = CTkOptionMenu(win, width=30, height=27, button_color="#1E90FF", hover=False,
                        values=mon, variable=m, bg_color=("#FFFFFF", "#000"), font=(ft, 18, "bold"))
-    om.set("November")
+    om.set(f"{mon[d.month-1]}")
     om.place(x=450,y=30)
 
-    l7 = CTkLabel(sf, text=f"Max amount spended in this month : {mxm}", text_color=("#FFFFFF", "#000"),
-                  bg_color=("#000", "#FFFFFF"), font=(ft, 16, "bold"))
+    l7 = CTkLabel(sf, text=f"Max amount spended in this month : {mxm}", text_color="#000",
+                  bg_color="#FFF", font=(ft, 16, "bold"))
     l7.pack(padx=5, pady=5, side='top', anchor=W)
 
-    l8 = CTkLabel(sf, text=f"Min amount spended in this month : {mnm}", text_color=("#FFFFFF", "#000"),
-                  bg_color=("#000", "#FFFFFF"), font=(ft, 16, "bold"))
+    l8 = CTkLabel(sf, text=f"Min amount spended in this month : {mnm}", text_color="#000",
+                  bg_color="#FFF", font=(ft, 16, "bold"))
     l8.pack(padx=5, pady=5, side='top', anchor=W)
 
-    l9 = CTkLabel(sf, text=f"Max amount received in this month : {dmxm}", text_color=("#FFFFFF", "#000"),
-                  bg_color=("#000", "#FFFFFF"), font=(ft, 16, "bold"))
+    l9 = CTkLabel(sf, text=f"Max amount received in this month : {dmxm}", text_color="#000",
+                  bg_color="#FFF", font=(ft, 16, "bold"))
     l9.pack(padx=5, pady=5, side='top', anchor=W)
 
-    l10 = CTkLabel(sf, text=f"Min amount received in this month : {dmnm}", text_color=("#FFFFFF", "#000"),
-                  bg_color=("#000", "#FFFFFF"), font=(ft, 16, "bold"))
+    l10 = CTkLabel(sf, text=f"Min amount received in this month : {dmnm}", text_color="#000",
+                  bg_color="#FFF", font=(ft, 16, "bold"))
     l10.pack(padx=5, pady=5, side='top', anchor=W)
 
-    l11 = CTkLabel(win,text=f"Report from {sd} to {D}", text_color=("cyan","red"),
-                  bg_color=("#000", "#FFFFFF"), font=(ft, 12, "bold"))
-    l11.place(x=380,y=80)
+    l11 = CTkLabel(win,text=f"Report from {sd} to {D}", text_color="#000",
+                  bg_color="#FFF", font=(ft, 12, "bold"))
+    l11.place(x=360,y=80)
 
-    l12 = CTkLabel(win, text=f"Report according to above selected month", text_color=("cyan","red"),
-                   bg_color=("#000", "#FFFFFF"), font=(ft, 12, "bold"))
-    l12.place(x=380, y=100)
-
-def sg():
-    if chs() == 1:
-        win = CTkFrame(mainwin, width=640, height=360, fg_color=("#FFFFFF", "#000"), bg_color=("#FFFFFF", "#000"))
-        win.place(x=0, y=0)
-
-        ph3 = CTkImage(light_image=Image.open("img\\back.png"), dark_image=Image.open("img\\back.png"), size=(40, 40))
-        i3 = CTkButton(win, image=ph3, bg_color=("#FFFFFF", "#000"), text="", hover=False, fg_color=("#FFFFFF", "#000"),
-                       command=win.destroy)
-        i3.place(x=-20, y=10)
-
-        ltt = CTkLabel(win, text="Suggetion Corner", font=(ft, 22, "bold"), bg_color=("#FFFFFF", "#000"))
-        ltt.place(x=110, y=23)
-
-        l1 = CTkLabel(win,text="This feature of the application is working with help of last month data",
-                      font=(ft,18,"bold"),bg_color=("#FFFFFF","#000"))
-        l1.place(x=50,y=210)
-
-        l2 = CTkLabel(win, text="Apologies, So pls try this feature after using one month of our product .",
-                      font=(ft, 18, "bold"), bg_color=("#FFFFFF", "#000"))
-        l2.place(x=50, y=240)
-
-        ph1 = CTkImage(light_image=Image.open("img\\img ct.png"), dark_image=Image.open("img\\img ct.png"),
-                       size=(170, 170))
-        ph = CTkImage(light_image=Image.open("img\\img cr.png"), dark_image=Image.open("img\\img cr.png"), size=(100,  100))
-
-        i4 = CTkLabel(win, image=ph1, bg_color=("#FFFFFF", "#000"), text="")
-        i4.place(x=450, y=30)
-
-        i5 = CTkLabel(win, image=ph, bg_color=("#FFFFFF", "#000"), text="")
-        i5.place(x=350, y=95)
-    else:
-        win = CTkFrame(mainwin, width=640, height=360, fg_color=("#FFFFFF", "#000"), bg_color=("#FFFFFF", "#000"))
-        win.place(x=0, y=0)
-
-        ph3 = CTkImage(light_image=Image.open("img\\back.png"), dark_image=Image.open("img\\back.png"), size=(40, 40))
-        i3 = CTkButton(win, image=ph3, bg_color=("#FFFFFF", "#000"), text="", hover=False, fg_color=("#FFFFFF", "#000"),
-                       command=win.destroy)
-        i3.place(x=-20, y=10)
-
-        ltt = CTkLabel(win, text="Suggetion Corner", font=(ft, 22, "bold"), bg_color=("#FFFFFF", "#000"))
-        ltt.place(x=110, y=23)
-
-        sf = CTkScrollableFrame(win, width=560, height=270, bg_color=("#FFFFFF", "#000"), fg_color=("#000", "#FFFFFF"))
-        sf.place(x=30, y=70)
-
-
-
-
-
-
-
+    l12 = CTkLabel(win, text=f"Report according to above selected month", text_color="#000",
+                  bg_color="#FFF", font=(ft, 12, "bold"))
+    l12.place(x=360, y=100)
 
 
 
 """_________________________________________________________________________________________________________________"""
 
+# Mainwindow
 mainwin = CTk()
-mainwin.geometry("640x360")
+mainwin.geometry("640x360+0+0")
 mainwin.resizable(False, False)
 mainwin.title("Financial_assistance")
 
@@ -365,9 +329,9 @@ i3 = CTkButton(mainwin, image=ph3, bg_color=("#FFFFFF", "#000"), text="", hover=
                command=mainwin.destroy)
 i3.place(x=-20, y=10)
 
-ld = CTkLabel(mainwin, text=f"Date : {D}", bg_color=("#FFFFFF", "#000"), font=("candara", 12, "bold"))
+ld = CTkLabel(mainwin, text=f"Date : {D}", bg_color=("#FFFFFF", "#000"), font=("candara", 14, "bold"))
 ld.place(x=500, y=10)
-lt = CTkLabel(mainwin, bg_color=("#FFFFFF", "#000"), font=("candara", 12, "bold"))
+lt = CTkLabel(mainwin, bg_color=("#FFFFFF", "#000"), font=("candara", 14, "bold"))
 lt.place(x=500, y=30)
 
 shtime()
@@ -393,10 +357,6 @@ b3.place(x=40, y=240)
 b4 = CTkButton(mainwin, text="Search Transaction", font=(ft, 18, "bold"), border_spacing=6,
                fg_color="#1E90FF", corner_radius=12, bg_color=("#FFFFFF", "#000"), command=Swin3)
 b4.place(x=40, y=190)
-
-b5 = CTkButton(mainwin, text="Suggestion Corner", font=(ft, 18, "bold"), border_spacing=6,
-               fg_color="#1E90FF", corner_radius=12, bg_color=("#FFFFFF", "#000"),command=sg)
-b5.place(x=40, y=290)
 
 bt = CTkSwitch(mainwin, command=chtheme, text="", onvalue=1, offvalue=0, bg_color=("#FFFFFF", "#000"))
 bt.place(x=400, y=30)
